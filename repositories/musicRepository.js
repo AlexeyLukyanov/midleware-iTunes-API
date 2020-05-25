@@ -1,4 +1,4 @@
-const { Singer, Albom, Song } = require('../models/musicModel');
+const { Singer, Album, Song } = require('../models/musicModel');
 
 const checkSinger = function (singerName) {
     console.log('singerName PART');
@@ -15,24 +15,12 @@ const checkSinger = function (singerName) {
     })
 };
 
-const getAlboms = function (singer) {
-    return Albom.findAll({
-        where: { singer_id: singer.id }
-    })
-};
-
-const getSongs = function (albom) {
-    return Song.findAll({
-        where: { albom_id: albom.id}
-    })
-};
-
 const getMusicList = function (singerId) {
     return Singer.findAll({
         where: {id: singerId},
         include: [
           {
-            model: Albom,
+            model: Album,
             include: [
               {
                 model: Song,
@@ -63,14 +51,14 @@ const addSinger = function (singer) {
     
 };
 
-const addAlboms = function (alboms) {
-    return Albom.bulkCreate(alboms)
-    .then(alboms => {
-        alboms.forEach(albom => console.log(`Albom ${albom.name} saved in db`));
-        return alboms;
+const addAlbums = function (albums) {
+    return Album.bulkCreate(albums)
+    .then(albums => {
+        albums.forEach(album => console.log(`Album ${album.name} saved in db`));
+        return albums;
     })
     .catch(err => {
-        console.log('addAlboms error');
+        console.log('addAlbums error');
         console.log(err)
     })
 };
@@ -88,10 +76,8 @@ const addSongs = function (songs) {
 
 module.exports = {
     checkSinger,
-    getAlboms,
-    getSongs,
     getMusicList,
     addSinger,
-    addAlboms,
+    addAlbums,
     addSongs
 }

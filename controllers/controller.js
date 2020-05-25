@@ -23,27 +23,22 @@ const artist_music_list = function (req, res, next) {
                     .then(singerId => {
                         console.log('Part 2 -------------------------------------------------------------------');
                         console.log(singerId);
-                        // Call the function request(alboms) to iTines API 
-                        helper.requestAlboms(singerId)
+                        // Call the function request(albums) to iTines API 
+                        helper.requestAlbums(singerId)
                         .then(response => {
                             if (response.resultCount !== 0) {
                                 console.log('Part 3 -------------------------------------------------------------------');
                                 console.log(response);
-                                const alboms = helper.getAlboms(response);
+                                const albums = helper.getAlbums(response);
                                 console.log('PART 3.1 -------------------------------------------------------------------');
-                                console.log(alboms);
-                                // And save alboms to local DB
-                                musicRepository.addAlboms(alboms)
-                                .then(alboms => {
-                                    return helper.getArrOfAlbomId(response);
-                                })
-                                .then(arrOfAlbomsId => {
-                                    // нужно исправить -----------------------------------------------------------------------------------
-
-
-                                    // For each albom ID call the function request(songs) to iTines API. It'll be array of promises
-                                    Promise.all( arrOfAlbomsId.map(albomId => {
-                                        return helper.requestSongs(albomId).then(response => {
+                                console.log(albums);
+                                // And save albums to local DB
+                                musicRepository.addAlbums(albums)
+                                .then(albums => {
+                                    const arrOfAlbumsId = helper.getArrOfAlbumId(albums);
+                                    // For each album ID call the function request(songs) to iTines API. It'll be array of promises
+                                    Promise.all( arrOfAlbumsId.map(albumId => {
+                                        return helper.requestSongs(albumId).then(response => {
                                         if (response.resultCount !== 0) {
                                                 console.log('Part 4 -------------------------------------------------------------------');
                                                 // console.log(response);
@@ -62,16 +57,12 @@ const artist_music_list = function (req, res, next) {
                                             })
                                         })
                                     )
-
-                                    // нужно исправить -----------------------------------------------------------------------------------
-
-                                    
-                                    // Correct the Promise function. (Its does't work correctly) 
                                     .then(() => {
-                                        musicRepository.checkSinger(req.query.singer.toLowerCase())
+                                        helper.getSinger(req.query.singer.toLowerCase())
                                         .then(singer => {
-                                            musicRepository.getMusicList(singer.id)
+                                            musicRepository.getMusicList(singer.artistId)
                                             .then(result => {
+                                                // const resultWithCount = {albumsCount: result[0].alboms.length, results: result};
                                                 res.send(JSON.stringify(result))
                                             }).catch(err => {
                                                 console.log('SendingResult error');
@@ -81,11 +72,11 @@ const artist_music_list = function (req, res, next) {
                                     })
 
                                 }).catch(err => {
-                                    console.log('requestAlboms error');
+                                    console.log('requestAlbums error');
                                     console.log(err)
                                 })
                             } else {
-                                res.send ('Alboms not found')
+                                res.send ('Albums not found')
                             }
                         })
                     }).catch(err => {
@@ -100,20 +91,19 @@ const artist_music_list = function (req, res, next) {
         // If the singer was found in local DB
         } else {
             // get the music list and send to client
-            musicRepository.checkSinger(req.query.singer.toLowerCase())
-                                        .then(singer => {
-                                            musicRepository.getMusicList(singer.id)
-                                            .then(result => {
-                                                res.send(JSON.stringify(result))
-                                            }).catch(err => {
-                                                console.log('SendingResult error');
-                                                console.log(err)
-                                            })
-                                        })
+            helper.getSinger(req.query.singer.toLowerCase())
+            .then(singer => {
+                musicRepository.getMusicList(singer.artistId)
+                .then(result => {
+                    // const resultWithCount = {albumsCount: result[0].alboms.length, results: result};
+                    res.send(JSON.stringify(result))
+                }).catch(err => {
+                    console.log('SendingResult error');
+                    console.log(err)
+                })
+            })
         }
     })
 };
-
-
 
 module.exports = { artist_music_list }

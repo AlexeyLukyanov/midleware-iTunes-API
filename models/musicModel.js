@@ -11,7 +11,7 @@ const Singer = sequelize.define('singer', {
 	}
 })
 
-const Albom = sequelize.define('albom', {
+const Album = sequelize.define('album', {
 	id: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
@@ -34,15 +34,15 @@ const Song = sequelize.define('song', {
     }
 })
 
-Albom.belongsTo(Singer, { foreignKey: 'singer_id' });
-Song.belongsTo(Albom, { foreignKey: 'albom_id' });
-Albom.hasMany(Song, { foreignKey: 'albom_id' });
-Singer.hasMany(Albom, { foreignKey: 'singer_id' });
+Album.belongsTo(Singer, { foreignKey: 'singer_id' });
+Song.belongsTo(Album, { foreignKey: 'album_id' });
+Album.hasMany(Song, { foreignKey: 'album_id' });
+Singer.hasMany(Album, { foreignKey: 'singer_id' });
 
 sequelize.sync()
 
 module.exports = {
     Singer,
-    Albom,
+    Album,
     Song
 };

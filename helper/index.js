@@ -14,7 +14,7 @@ const requestSinger = function (singerName) {
     return request(singerOptions);
 };
 
-const requestAlboms = function (singerId) {
+const requestAlbums = function (singerId) {
     const albomOptions = {
         method: 'GET',
         uri: `https://itunes.apple.com/lookup?entity=album&id=${singerId}`,
@@ -23,10 +23,10 @@ const requestAlboms = function (singerId) {
     return request(albomOptions)
 };
 
-const requestSongs = function (albomId) {
+const requestSongs = function (albumId) {
     const songOptions = {
         method: 'GET',
-        uri: `https://itunes.apple.com/lookup?id=${albomId}&media=music&entity=song&atrattribute=songTerm&limit=200`,
+        uri: `https://itunes.apple.com/lookup?id=${albumId}&media=music&entity=song&atrattribute=songTerm&limit=200`,
         json: true
     };
     return request(songOptions);
@@ -39,26 +39,30 @@ const getSinger = function (obj){
     };
 };
 
+// So we have a little problem, the iTunes take the all albums with our singer (including join albums with another singer, ID each we have not in local DB yet).
+// If we try save the album singer_id each is not saved, we'll have error from db and can't save another albums and album's songs.
+// We use filter function and save only albums with artist ID (not with ID another singer)
 
-const getAlboms = function (obj) {
-    // Deliting first element in array, becourse the first element is not an albom (Its a artist)
-    return obj.results.slice(1).map(albom => {
+const getAlbums = function (obj) {
+    return obj.results.slice(1)   // Delete first element in array, becourse the first element is not an album (Its a artist)
+    .filter(album => obj.results[0].artistId === album.artistId) // we need only albums with artistId our artist (artist obj is first element of array results in obj - object each we get from iTunes API)
+    .map(album => { 
         return {
-            name: albom.collectionName,
-            id: Number(albom.collectionId),
-            singer_id: Number(albom.artistId)
+            name: album.collectionName,
+            id: Number(album.collectionId),
+            singer_id: Number(album.artistId),
         }
     }
 )}
 
-const getArrOfAlbomId = function (obj) { return obj.results.slice(1).map( albom => Number(albom.collectionId) )};
+const getArrOfAlbumId = function (arr) { return arr.map( album => album.id )};
 
 // Make array of songs
 const getSongs = function (obj){ return obj.results.slice(1).map(song => {
         return {
             name: song.trackName,
             id: Number(song.trackId),
-            albom_id: Number(song.collectionId),
+            album_id: Number(song.collectionId),
             time: Number(song.trackTimeMillis)
         }
     })
@@ -66,10 +70,10 @@ const getSongs = function (obj){ return obj.results.slice(1).map(song => {
 
 module.exports = {
     requestSinger,
-    requestAlboms,
+    requestAlbums,
     requestSongs,
     getSinger,
-    getAlboms,
-    getArrOfAlbomId,
+    getAlbums,
+    getArrOfAlbumId,
     getSongs
 }
