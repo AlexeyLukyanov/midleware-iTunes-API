@@ -1,0 +1,28 @@
+{
+    "development": {
+      "username": "your user name",
+      "password": "your password",
+      "database": "your data base name",
+      "host": "localhost",
+      "databasePort": "5432",
+      "dialect": "postgres",
+      "operatorsAliases": true
+    },
+    "test": {
+      "username": "root",
+      "password": null,
+      "database": "database_test",
+      "host": "localhost",
+      "dialect": "postgres",
+      "operatorsAliases": false
+    },
+    "production": {
+      "username": "root",
+      "password": null,
+      "database": "database_production",
+      "host": "localhost",
+      "dialect": "postgres",
+      "operatorsAliases": false
+    }
+  }
+  

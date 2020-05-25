@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <h1>
+    <%= singer %>
+  </h1>
+  <ul>
+    <% alboms.forEach(function(albom){ %>
+      <li>
+        <h3>
+          <%= albom.name %>
+        </h3>
+        <ul>
+          <% songs.forEach(function(song){ %>
+            <li>
+              <%= song.name %> <%= song.time %>
+            </li>
+        </ul>
+      </li>
+      <br>
+    <% }); %>
+  </ul>
+</body>
+</html>
