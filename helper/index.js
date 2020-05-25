@@ -8,7 +8,7 @@ const plusInstedOfSpaceInSingerName = function (singerName){
 const requestSinger = function (singerName) {
     const singerOptions = {
         method: 'GET',
-        uri: `https://itunes.apple.com/search?term=${plusInstedOfSpaceInSingerName(singerName)}&media = music&entity=musicArtist&attribute=artistTerm&limit=10`,
+        uri: `https://itunes.apple.com/search?term=${plusInstedOfSpaceInSingerName(singerName)}&media = music&entity=musicArtist&attribute=artistTerm&limit=1`,
         json: true
     };
     return request(singerOptions);
@@ -17,7 +17,7 @@ const requestSinger = function (singerName) {
 const requestAlbums = function (singerId) {
     const albomOptions = {
         method: 'GET',
-        uri: `https://itunes.apple.com/lookup?entity=album&id=${singerId}`,
+        uri: `https://itunes.apple.com/lookup?entity=album&id=${singerId}&limit=200`,
         json: true
     };
     return request(albomOptions)

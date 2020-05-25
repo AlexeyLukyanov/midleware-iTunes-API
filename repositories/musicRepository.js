@@ -1,14 +1,8 @@
 const { Singer, Album, Song } = require('../models/musicModel');
 
-const checkSinger = function (singerName) {
-    console.log('singerName PART');
-    console.log(singerName);
-    return Singer.findOne({ where: {name: singerName} })
-    .then(singer => {
-        // const singerName = singer.name;
-        console.log(`Singer ${singer} was found in db`);
-        return singer;
-    })
+const checkSinger = function (singerId) {
+    return Singer.findOne({ where: {id: singerId} })
+    .then(singer => singer ? singer.id : null) // return singerId || null 
     .catch(err => {
         console.log('checkSinger error');
         console.log(err)
@@ -18,23 +12,20 @@ const checkSinger = function (singerName) {
 const getMusicList = function (singerId) {
     return Singer.findAll({
         where: {id: singerId},
+        attributes: ['id', 'name'],
         include: [
           {
             model: Album,
+            attributes: ['id', 'name', 'singer_id'],
             include: [
               {
                 model: Song,
+                attributes: { exclude: ['createdAt', 'updatedAt'] }
               }
             ]
           }
         ]
-      })
-    //   .then(result => {
-    //       console.log('GET MUSIC LIST PART -------------------------------------------------------------------------------------------------------------------------');
-    //       console.log(result)
-    //       return result;
-
-    //   })
+    })
 }
 
 const addSinger = function (singer) {
