@@ -36,3 +36,12 @@ API:
 
 - GET http://localhost:3000/music/singer?singer=singerName - get artist's albums with songs and song's time. Artist name is sent in a query params
  (?singer=singerName);
+
+----------------------------------------------------------------------------------------------------------------------------------
+FIX LIST:
+
+1. Promise chains are fixed in controller function.
+
+2. Error processing is fixed. All errors (exeptions) are processed into catch block at the end of the promise chain.
+
+3. Errors are put to console out and send to client with an error status (error code).
